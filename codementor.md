@@ -17,6 +17,23 @@ Firebase is much more exciting that a regular database. It is real-time. What ma
 In this tutorial, we will explore how Firebase can be integrated with a React web application. React applications are structured with uni-directional data flows. Redux is one of the popular implementations. Most of the Firebase operations are handled within the Redux layer. Let us delve into Redux.
 
 ## II. Redux
+Redux organises data in the front-end using three principles.
+
+1. The state of the application is stored in a single object tree.
+2. The state is read-only.
+3. The state can be changed by emitting an action which describes the desired change.
+
+Using Redux within an application allows uni-directional data flow. When Redux is used with React, the data from the store flows through props in container components. The container components pass data down to other React components.
+
+Whenever a component wants to change the data stored within the store, it prepares an action object and dispatches the action object to the store. The store passes on the action to several reducers. A reducer is a JavaScript function which takes the previous state of the store and the action object and then creates a new state for the store. The organisation of modules within the Redux layer is shown below.
+
+![Redux](https://cdn.filestackcontent.com/23F6Q1YuRlKbYnb2KNqt "Redux")
+
+Actions are objects which have an action type. The action object is dispatched to the store. More often than not, React applications interact with data through an API. The API is responsible to fetch data from the backend and update data. API interactions are asynchronous. When a request to fetch data is made to an API, the API returns back with data after some time. To enable asynchronous communication within the Redux layer, Redux has a middleware component called `redux-thunk`. Redux thunk allows a react component to dispatch a function instead of an action object. The dispatched function usually interacts with the API and dispatches an action object when it receives a response from the API.
+
+Apart from `redux-thunk`, there is a convenience package called `react-redux`. The package has Providers and Connectors to connect a React component to a Redux store. The Provider component is responsible for providing the store to downstream components. The connect function wraps a React component and provides the state of the store via props.
+
+For this tutorial, we will use `redux-thunk` to dispatch functions which interact with Firebase. We will use `react-redux` to connect React components to the Redux store.
 
 ## III. Benefits of using Firebase with Redux
 
