@@ -8,7 +8,8 @@ export function getInvite() {
       const invite = snap.val();
       dispatch(getInviteFulfilledAction(invite))
     })
-    .catch(() => {
+    .catch((error) => {
+      console.log(error);
       dispatch(getInviteRejectedAction());
     });
   }

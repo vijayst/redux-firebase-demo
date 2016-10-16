@@ -15,7 +15,7 @@ export function inviteReducer(state = {}, action) {
         error: 'Error in getting invite.',
       });
     }
-    case ActionTypes.GetInviteRequested: {
+    case ActionTypes.GetInviteFulfilled: {
       return Object.assign({}, state, {
         inProgress: false,
         success: 'Got invite.'
