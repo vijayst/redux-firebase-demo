@@ -1,6 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Invite from './components/invite.jsx';
+import { Provider } from 'react-redux';
+import InviteContainer from './containers/invite_container';
+import store from './store/store';
 import "./stylesheets/main.scss";
 
-ReactDOM.render(<Invite />, document.getElementById('container'));
+const main = (
+  <Provider store={store}>
+    <InviteContainer />
+  </Provider>
+);
+
+ReactDOM.render(main, document.getElementById('container'));
