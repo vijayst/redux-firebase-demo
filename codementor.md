@@ -71,8 +71,107 @@ The database has three top level nodes: host, agenda and guests. Guests is a col
 }
 ```
 
-
 ### B. Scaffold the React project
+We are all set to write some code. Initialise the project with package.json.
+
+```
+npm init
+```
+We will install production dependencies for our project.
+
+```
+npm install --save
+react
+react-dom
+redux
+react-redux
+redux-thunk
+redux-logger
+firebase
+bootstrap-sass
+```
+`react` and `react-dom` packages are required to write React code. `redux` and `react-redux` packages are used to connect React components with the Redux store. `redux-thunk` and `redux-logger` are redux middleware packages. `firebase` package provides a simple interface to interact with the database. `bootstrap-sass` provides the bootstrap styles for the project.
+
+We will use Webpack for building the React application. React components are written in JSX and ES6. JSX and ES6 have to be compiled to JavaScript that the browser understands. Babel is used by Webpack for the transpilation.
+
+```
+npm install --save-dev
+webpack
+webpack-dev-server
+babel-core
+babel-loader
+babel-preset-react
+babel-preset-es2015
+node-sass
+sass-loader
+css-loader
+style-loader
+```
+Additionally, create a .babelrc file.
+
+```
+{
+  "presets": ["es2015", "react"]
+}
+
+```
+Use the following Webpack config file.
+
+```
+module.exports = {
+  devtool: 'inline-source-map',
+  entry: __dirname + '/app.jsx',
+  output: {
+    filename: 'bundle.js'
+  },
+  module : {
+    loaders : [
+      {
+        test : /\.jsx?/,
+        loader : 'babel',
+        exclude: /node_modules/
+      },
+      {
+        test: /\.scss$/,
+        loaders: ['style', 'css', 'sass']
+      }
+    ]
+  }
+}
+```
+Webpack uses the entry file to start the build process. All the files referenced by the entry file are included as input files. Webpack makes use of loaders to process the input files. The loaders used with the above configuration are babel, css and sass. The output of the build process is a bundle which has all the scripts required to run the application.
+
+Our React project is almost ready. Add `app.jsx` which is the main React component.
+
+```
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+ReactDOM.render(<div>Hello world</div>,
+  document.getElementById('container'));
+```
+
+Create an index page and include the output bundle.
+
+```
+<html>
+  <head>
+    <title>Meeting Invite</title>
+  </head>
+  <body>
+    <div id="container"></div>
+    <script src="bundle.js"></script>
+  </body>
+</html>
+```
+
+Use `webpack-dev-server` for the start script and run the application using `npm start` command.
+
+```
+"scripts": {
+  "start": "webpack-dev-server --inline",
+}
+```
 
 
 ### C. Create the Redux store
