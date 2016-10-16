@@ -36,12 +36,44 @@ Apart from `redux-thunk`, there is a convenience package called `react-redux`. T
 For this tutorial, we will use `redux-thunk` to dispatch functions which interact with Firebase. We will use `react-redux` to connect React components to the Redux store.
 
 ## III. Benefits of using Firebase with Redux
+Firebase connects the database to the front-end with a simple API. The real-time feature of Firebase is an additional bonus. It is possible to use Firebase directly within React components. This will make the React components hard-to-maintain. Moving the Firebase code to the Redux layer greatly simplifies the code structure. Redux passes data to the React components via props. This allows writing functional or stateless components which just renders the props.
 
 ## IV. Tutorial
+Our sample application is a simple meeting invite app. The app URL is sent to many guests. A guest can accept the meeting invite. When the guest accepts the meeting invite, the guest list is updated real-time in all other browsers which have the app open. The screenshot of the meeting invite app is shown below.
 
-### A. Firebase console
+![Meeting invite app](https://cdn.filestackcontent.com/R8wugltbTaeEllOlA0Vg "Meeting invite app")
 
-### B. Scaffold the React app
+### A. Firebase data
+Create a new Firebase database by clicking on the "Create new project" button. In the project dashboard, the data is shown in a tree view. Data can be exported and imported into the database.
+
+![Firebase data](https://cdn.filestackcontent.com/LscUJLbPTyuQkjRDAY2P "Firebase data")
+
+The database has three top level nodes: host, agenda and guests. Guests is a collection of guest objects. Firebase does not use arrays to store collection. It uses objects with auto-generated keys. We will import data into our project using the following JSON data.
+
+```
+{
+  "agenda" : "Business meeting for the next Facebook",
+  "guests" : {
+    "-KUDHLoA79LzYXsXLNZM" : {
+      "name" : "Dustin Moskovitz"
+    },
+    "-KUDHPgsYqOVcC-Db7-W" : {
+      "name" : "Eduardo Saverin"
+    },
+    "-KUDHS9kUXPYWN8aqD6A" : {
+      "name" : "Chris Hughes"
+    },
+    "-KUDHW9EmNahoyjdwJdf" : {
+      "name" : "Elon Musk"
+    }
+  },
+  "host" : "Mark Zuckerberg"
+}
+```
+
+
+### B. Scaffold the React project
+
 
 ### C. Create the Redux store
 
