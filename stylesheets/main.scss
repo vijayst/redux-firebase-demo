@@ -1,3 +1,10 @@
 $icon-font-path: '~bootstrap-sass/assets/fonts/bootstrap/';
 $bootstrap-sass-asset-helper: true;
 @import "../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss";
+
+.meeting-summary {
+  padding: 20px;
+  .row {
+    margin-bottom: 15px;
+  }
+}
