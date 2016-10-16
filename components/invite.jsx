@@ -37,14 +37,6 @@ export default class Invite extends React.Component {
               {agenda}
             </div>
           </div>
-          <div className="row">
-            <div className="col-sm-4 col-md-2">
-              <b>Guest count:</b>
-            </div>
-            <div className="col-sm-8 col-md-10">
-              {guest_count}
-            </div>
-          </div>
         </div>
         <div className="bg-info meeting-form">
             <div className="row">
@@ -74,15 +66,15 @@ export default class Invite extends React.Component {
         <div className="meeting-list">
           <h2>Guests</h2>
           {guests && guests.length > 0 ? (
-            <div>
+            <ul>
               {guests.map((guest, index) => {
                 return (
-                  <div key={index} className="row">
+                  <li key={index}>
                     {guest.name}
-                  </div>
+                  </li>
                 );
               })}
-            </div>
+            </ul>
           ) : null}
         </div>
       </div>

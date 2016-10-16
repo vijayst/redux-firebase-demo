@@ -16,13 +16,12 @@ export function inviteReducer(state = {}, action) {
       });
     }
     case ActionTypes.GetInviteFulfilled: {
-      const { host, agenda, guests, guest_count } = action.invite;
+      const { host, agenda, guests } = action.invite;
       const newState = Object.assign({}, state, {
         inProgress: false,
         success: 'Got invite.',
         host,
-        agenda,
-        guest_count
+        agenda
       });
       newState.guests = [];
       if (guests) {

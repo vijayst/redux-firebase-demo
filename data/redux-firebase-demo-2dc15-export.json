@@ -1,6 +1,4 @@
 {
-  "guest_count" : 0,
   "host" : "Mark Zuckerberg",
-  "party" : "My cool party",
-  "guests": []
+  "agenda" : "Business meeting for the next Facebook."
 }
