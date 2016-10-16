@@ -16,10 +16,42 @@ export function inviteReducer(state = {}, action) {
       });
     }
     case ActionTypes.GetInviteFulfilled: {
+      const { host, agenda, guests, guest_count } = action.invite;
+      const newState = Object.assign({}, state, {
+        inProgress: false,
+        success: 'Got invite.',
+        host,
+        agenda,
+        guest_count
+      });
+      newState.guests = [];
+      if (guests) {
+        newState.guests = Object.keys(guests).map(k => guests[k]);
+      }
+      return newState;
+    }
+    case ActionTypes.AddToInviteRequested: {
+      return Object.assign({}, state, {
+        inProgress: true,
+        error: '',
+        success: ''
+      });
+    }
+    case ActionTypes.AddToInviteRejected: {
       return Object.assign({}, state, {
         inProgress: false,
-        success: 'Got invite.'
-      }, action.invite);
+        error: 'Error in adding guest.',
+      });
+    }
+    case ActionTypes.AddToInviteFulfilled: {
+      const newState = Object.assign({}, state, {
+        inProgress: false,
+        success: 'Added guest.'
+      });
+      newState.guests = newState.guests || [];
+      newState.guests = newState.guests.slice();
+      newState.guests.push(action.guest);
+      return newState;
     }
     default:
       return state;

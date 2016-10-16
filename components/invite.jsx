@@ -2,12 +2,19 @@ import React from 'react';
 
 export default class Invite extends React.Component {
 
+  constructor() {
+    super();
+    this.state = {
+      name: ''
+    };
+  }
+
   componentDidMount() {
     this.props.onGetInvite();
   }
 
   render() {
-    const { host, agenda, guest_count } = this.props.invite;
+    const { host, agenda, guest_count, guests } = this.props.invite;
     return (
       <div className="container">
         <div className="well">
@@ -47,6 +54,8 @@ export default class Invite extends React.Component {
               <div className="col-sm-8 col-md-10">
                 <input
                   type="text"
+                  value={this.state.name}
+                  onChange={e => this.setState({ name: e.target.value })}
                 />
               </div>
             </div>
@@ -55,14 +64,26 @@ export default class Invite extends React.Component {
                 <button
                   type="button"
                   className="btn btn-primary"
+                  onClick={() => this.props.onAddToInvite(this.state.name)}
                 >
                   I am coming!
                 </button>
               </div>
             </div>
         </div>
-        <div className="bg-success meeting-list">
+        <div className="meeting-list">
           <h2>Guests</h2>
+          {guests && guests.length > 0 ? (
+            <div>
+              {guests.map((guest, index) => {
+                return (
+                  <div key={index} className="row">
+                    {guest.name}
+                  </div>
+                );
+              })}
+            </div>
+          ) : null}
         </div>
       </div>
     );
