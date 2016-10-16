@@ -1,3 +1,3 @@
-div {
-  background-color: red;
-}
+$icon-font-path: '~bootstrap-sass/assets/fonts/bootstrap/';
+$bootstrap-sass-asset-helper: true;
+@import "../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss";
