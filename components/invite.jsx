@@ -39,6 +39,31 @@ export default class Invite extends React.Component {
             </div>
           </div>
         </div>
+        <div className="bg-info meeting-form">
+            <div className="row">
+              <div className="col-sm-4 col-md-2">
+                <b>Name:</b>
+              </div>
+              <div className="col-sm-8 col-md-10">
+                <input
+                  type="text"
+                />
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-sm-4 col-md-2">
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                >
+                  I am coming!
+                </button>
+              </div>
+            </div>
+        </div>
+        <div className="bg-success meeting-list">
+          <h2>Guests</h2>
+        </div>
       </div>
     );
   }
