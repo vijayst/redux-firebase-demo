@@ -5,7 +5,9 @@ const actionTypes = {
 
   AddToInviteRequested: 'ADD_TO_INVITE_REQUESTED',
   AddToInviteRejected: 'ADD_TO_INVITE_REJECTED',
-  AddToInviteFulfilled: 'ADD_TO_INVITE_FULFILLED'
+  AddToInviteFulfilled: 'ADD_TO_INVITE_FULFILLED',
+
+  GuestAdded: 'GUEST_ADDED'
 };
 
 export default actionTypes;

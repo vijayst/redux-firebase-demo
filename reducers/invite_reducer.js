@@ -47,6 +47,13 @@ export function inviteReducer(state = {}, action) {
         inProgress: false,
         success: 'Added guest.'
       });
+      // newState.guests = newState.guests || [];
+      // newState.guests = newState.guests.slice();
+      // newState.guests.push(action.guest);
+      return newState;
+    }
+    case ActionTypes.GuestAdded: {
+      const newState = Object.assign({}, state);
       newState.guests = newState.guests || [];
       newState.guests = newState.guests.slice();
       newState.guests.push(action.guest);
