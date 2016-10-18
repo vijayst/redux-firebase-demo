@@ -175,6 +175,89 @@ Use `webpack-dev-server` for the start script and run the application using `npm
 
 
 ### C. Create the Redux store
+Creating the redux store involves creating the root reducer and applying middleware components. We will start by creating a basic reducer for managing the invite state.
+
+```
+export function inviteReducer(state = {}, action) {
+  switch(action.type) {
+    default:
+      return state;
+  }
+}
+```
+Redux provides an utility called `combineReducers` to compose the root reducer.
+
+```
+import { combineReducers } from 'redux';
+import { inviteReducer } from './invite_reducer';
+
+const rootReducer = combineReducers({
+  invite: inviteReducer
+});
+
+export default rootReducer;
+```
+With the root reducer in place, we can create the store.
+
+```
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import createLogger from "redux-logger";
+import rootReducer from '../reducers/root_reducer';
+
+const logger = createLogger();
+
+const store = createStore(rootReducer,
+  {},
+  applyMiddleware(thunk, logger)
+);
+
+export default store;
+```
+`redux-thunk` and `redux-logger` are two middleware packages that are used in the store creation. `redux-thunk` is used to dispatch functions instead of action objects. The middleware executes the function. When the function is executed, one or more action objects are dispatched to the store. `redux-logger` provides useful log messages in the browser console.
+
+With the store created, we should connect it to the React component using `react-redux`. The Provider component is the top-level component within a React application.
+
+```
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import InviteContainer from './containers/invite_container';
+import store from './store/store';
+import "./stylesheets/main.scss";
+
+const main = (
+  <Provider store={store}>
+    <InviteContainer />
+  </Provider>
+);
+
+ReactDOM.render(main, document.getElementById('container'));
+```
+The InviteContainer component in the above code is a wrapper component created by react-redux. It wraps the Invite component by injecting state and dispatch functions via props.
+
+```
+import { connect } from 'react-redux';
+import Invite from '../components/invite.jsx';
+
+function mapStateToProps(state) {
+  return {
+    invite: state.invite
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+  };
+}
+
+const inviteContainer = connect(mapStateToProps, mapDispatchToProps)(Invite);
+
+export default inviteContainer;
+```
+In the above code, the `connect` function accepts two function parameters. The first function provides the state props which are injected into the Invite component. The second function provides the dispatch props which are injected into the Invite component.
+
+Redux store is now created and configured for use within our React application.
 
 ### D. Querying data from Firebase
 
