@@ -260,6 +260,133 @@ In the above code, the `connect` function accepts two function parameters. The f
 Redux store is now created and configured for use within our React application.
 
 ### D. Querying data from Firebase
+We will show a basic meeting invite displaying the host and the agenda. The data comes from our Firebase database. To work with Firebase, we need to create a database object.
+
+```
+import firebase from 'firebase';
+
+const config = {
+  apiKey: 'your_api_key',
+  authDomain: 'your_db_name.firebaseio.com',
+  databaseURL: 'https://your_db_name.firebaseio.com/'
+};
+
+firebase.initializeApp(config);
+const database = firebase.database();
+
+export default database;
+```
+Initialising the app requires the API key and the database URL. The database object is used for getting data, updating data and handling events. The root node in our database is the invite object. The code for getting the value of the root node is shown below.
+
+```
+database.ref('/').once('value', snap => {
+  const invite = snap.val();
+});
+```
+We create a ref object by passing in the URL path. The `once` method on the ref is used to handle the first occurrence of an event. We handle the `value` event which is triggered when the value of the ref is set. The function handler receives the snapshot of the ref. Calling the `val` method on the snapshot gives the value of the node.
+
+We need to plug in the above code within a Redux action. From our component, we will dispatch a function that gets the invite.
+
+```
+import ActionTypes from '../constants/action_types';
+import database from './database';
+
+export function getInvite() {
+  return dispatch => {
+    dispatch(getInviteRequestedAction());
+    return database.ref('/').once('value', snap => {
+      const invite = snap.val();
+      dispatch(getInviteFulfilledAction(invite))
+    })
+    .catch((error) => {
+      console.log(error);
+      dispatch(getInviteRejectedAction());
+    });
+  }
+}
+
+function getInviteRequestedAction() {
+  return {
+    type: ActionTypes.GetInviteRequested
+  };
+}
+
+function getInviteRejectedAction() {
+  return {
+    type: ActionTypes.GetInviteRejected
+  }
+}
+
+function getInviteFulfilledAction(invite) {
+  return {
+    type: ActionTypes.GetInviteFulfilled,
+    invite
+  };
+}
+```
+The `getInvite` function is executed by the `redux-thunk`. Getting data from Firebase is an async operation. We dispatch three action objects: Requested, Fulfilled and Rejected. The Requested action is dispatched before the async operation. The Fulfilled action is dispatched after the async operation succeeded. The Rejected action is dispatched if there is any error. Action Types are strings which are defined in a constants file.
+
+```
+const actionTypes = {
+  GetInviteRequested: 'GET_INVITE_REQUESTED',
+  GetInviteRejected: 'GET_INVITE_REJECTED',
+  GetInviteFulfilled: 'GET_INVITE_FULFILLED'
+};
+
+export default actionTypes;
+
+```
+We should update our container component with the onGetInvite dispatch function.
+
+```
+import { getInvite } from '../actions/get_invite';
+
+
+function mapDispatchToProps(dispatch) {
+  return {
+    onGetInvite: () => dispatch(getInvite()),
+  };
+}
+```
+Finally, we are all set to get data in our React component. The `onGetInvite` prop is called when the component is mounted.
+
+```
+componentDidMount() {
+  this.props.onGetInvite();
+}
+```
+This function dispatches the `getInvite` to the store. `redux-thunk` executes the function to get data from Firebase database. The snapshot data is dispatched to the store as the `GetInviteFulfilled` action object. The reducers update the state of the store. The invite state is available to the component as props.
+
+```
+render() {
+  const { host, agenda } = this.props.invite;
+  return (
+  <div className="container">
+    <div className="well">
+      <h1>Meeting invite</h1>
+    </div>
+    <div className="bg-warning meeting-summary">
+      <div className="row">
+        <div className="col-sm-4 col-md-2">
+          <b>Host:</b>
+        </div>
+        <div className="col-sm-8 col-md-10">
+          {host}
+        </div>
+      </div>
+      <div className="row">
+        <div className="col-sm-4 col-md-2">
+          <b>Agenda:</b>
+        </div>
+        <div className="col-sm-8 col-md-10">
+          {agenda}
+        </div>
+      </div>
+    </div>
+  </div>
+  );
+}
+```
 
 ### E. Update data in Firebase
 
