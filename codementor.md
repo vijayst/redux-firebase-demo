@@ -259,7 +259,8 @@ In the above code, the `connect` function accepts two function parameters. The f
 
 Redux store is now created and configured for use within our React application.
 
-### D. Querying data from Firebase
+### D. Query data from Firebase
+
 We will show a basic meeting invite displaying the host and the agenda. The data comes from our Firebase database. To work with Firebase, we need to create a database object.
 
 ```
@@ -389,6 +390,112 @@ render() {
 ```
 
 ### E. Update data in Firebase
+For our invite app, any person who has the invite can click on the `I am coming` button. This will add her to the guest list. The database has a guests collection. We want to add the guest to the guests collection on clicking the button.
+
+```
+const guestsRef = database.ref('/guests');
+guestsRef.push({
+  name
+});
+```
+We get the `guests` ref and push the new guest object. The guest object is trivial. It has just the guest name. We will put this code in a Redux action as we did earlier.
+
+```
+import ActionTypes from '../constants/action_types';
+import database from './database';
+
+export function addToInvite(name) {
+  return dispatch => {
+    dispatch(addToInviteRequestedAction());
+    const guestsRef = database.ref('/guests');
+    guestsRef.push({
+      name
+    })
+    .then(() => {
+      dispatch(addToInviteFulfilledAction({ name }));
+    })
+    .catch((error) => {
+      dispatch(addToInviteRejectedAction());
+    });
+  }
+}
+
+
+function addToInviteRequestedAction() {
+  return {
+    type: ActionTypes.AddToInviteRequested
+  };
+}
+
+function addToInviteRejectedAction() {
+  return {
+    type: ActionTypes.AddToInviteRejected
+  }
+}
+
+function addToInviteFulfilledAction(guest) {
+  return {
+    type: ActionTypes.AddToInviteFulfilled,
+    guest
+  };
+}
+```
+When the above redux action is dispatched to the store, the reducer gets called with the `AddToInviteFulfilled` action. The reducer creates a new invite state while adding the guest.
+
+```
+case ActionTypes.AddToInviteFulfilled: {
+  const newState = Object.assign({}, state, {
+    inProgress: false,
+    success: 'Added guest.'
+  });
+  newState.guests = newState.guests || [];
+  newState.guests = newState.guests.slice();
+  newState.guests.push(action.guest);
+  return newState;
+}
+```
+The container component is wrapped with the new dispatch function.
+
+```
+import { getInvite } from '../actions/get_invite';
+import { addToInvite } from '../actions/add_invite';
+
+function mapDispatchToProps(dispatch) {
+  return {
+    onGetInvite: () => dispatch(getInvite()),
+    onAddToInvite: (name) => dispatch(addToInvite(name))
+  };
+}
+```
+Finally, we handle the click event handler of the button to dispatch the `addToInvite` function. The invite form with the input and button controls is shown below.
+
+```
+<div className="bg-info meeting-form">
+  <div className="row">
+    <div className="col-sm-4 col-md-2">
+      <b>Name:</b>
+    </div>
+    <div className="col-sm-8 col-md-10">
+      <input
+      type="text"
+      value={this.state.name}
+      onChange={e => this.setState({ name: e.target.value })}
+      />
+    </div>
+  </div>
+  <div className="row">
+    <div className="col-sm-4 col-md-2">
+      <button
+      type="button"
+      className="btn btn-primary"
+      onClick={() => this.props.onAddToInvite(this.state.name)}
+      >
+      I am coming!
+    </button>
+  </div>
+</div>
+```
+
 
 ### F. Handle events from Firebase
 
