@@ -70,6 +70,16 @@ The database has three top level nodes: host, agenda and guests. Guests is a col
   "host" : "Mark Zuckerberg"
 }
 ```
+By default, Firebase database has authentication set. To make the database publicly accessible for all, click the `Rules` tab on the database dashboard. Add the following rule.
+
+```
+{
+  "rules": {
+    ".read": true,
+    ".write": true
+  }
+}
+```
 
 ### B. Scaffold the React project
 We are all set to write some code. Initialise the project with package.json.
@@ -496,7 +506,71 @@ Finally, we handle the click event handler of the button to dispatch the `addToI
 </div>
 ```
 
-
 ### F. Handle events from Firebase
+In the previous section, we updated the guests collection in Firebase with a new guest. In the reducer, we updated the state to include the newly added guest. There is a slight caveat with the approach. When I have the invite open, when a guest is added from another browser session, I don't see the new guest in my invite. In this section, we will use the real-time feature of Firebase to update the guest in all browser sessions that has the invite app.
+
+To get the value of a ref, we used the `once` method. The `once` method handles the first occurrence of an event. There is another method called `on` which handles every occurrence of an event. We will use the `on` method on the `child_added` event of the guests ref.
+
+```
+export function watchGuestAddedEvent(dispatch) {
+  database.ref('/guests').on('child_added', (snap) => {
+    dispatch(getGuestAddedAction(snap.val()));
+  });
+}
+
+function getGuestAddedAction(guest) {
+  return {
+    type: ActionTypes.GuestAdded,
+    guest
+  };
+}
+```
+The `watchGuestAddedEvent` watches for the `child_added` event on the `guests` ref and dispatches an action object with the newly added guest. To ensure that we always watch for the event, we call it from the connect code.
+
+```
+import { getInvite } from '../actions/get_invite';
+import { addToInvite } from '../actions/add_invite';
+import { watchGuestAddedEvent } from '../actions/guest_added_event';
+
+function mapDispatchToProps(dispatch) {
+  watchGuestAddedEvent(dispatch);
+  return {
+    onGetInvite: () => dispatch(getInvite()),
+    onAddToInvite: (name) => dispatch(addToInvite(name))
+  };
+}
+```
+When the `GuestAdded` action is dispatched, our reducer sets a new invite state. The relevant reducer code is shown below.
+
+```
+export function inviteReducer(state = {}, action) {
+  switch(action.type) {
+    case ActionTypes.AddToInviteFulfilled: {
+      const newState = Object.assign({}, state, {
+        inProgress: false,
+        success: 'Added guest.'
+      });
+      // newState.guests = newState.guests || [];
+      // newState.guests = newState.guests.slice();
+      // newState.guests.push(action.guest);
+      return newState;
+    }
+    case ActionTypes.GuestAdded: {
+      const newState = Object.assign({}, state);
+      newState.guests = newState.guests || [];
+      newState.guests = newState.guests.slice();
+      newState.guests.push(action.guest);
+      return newState;
+    }
+  }
+}
+```
+The `AddToInviteFulfilled` reducer code is commented out. The same code is available while handling the `GuestAdded` action. The makes our invite app real-time.
+
 
 ### G. Wrapping up
+We have covered a lot of ground in the tutorial. We started with how firebase database is created. Then we scaffolded the React application with Webpack. We created a Redux store. We queried data, updated data and handled events from Firebase.
+
+Firebase is a real-time and NoSQL database from Google. It is simple and intuitive to use. Redux is a popular implementation of Flux pattern which allows uni-directional data flow. Using Firebase and Redux together makes the code maintainable.
+
+There is an accompanying [github project](https://github.com/vijayst/redux-firebase-demo) to the tutorial which you can use to follow along.
